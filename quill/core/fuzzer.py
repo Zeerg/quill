@@ -11,7 +11,7 @@ import time
 from ..utils.logging import get_logger
 from ..utils.clean import clean_directory
 from .mutators import get_mutator
-from .metrics import REFUSAL_RE
+from .refusal import is_refusal
 
 
 class Fuzzer:
@@ -141,7 +141,7 @@ class Fuzzer:
             "mutated": mutated,
             "response": response,
             "is_anomaly": is_anomaly,
-            "is_refusal": bool(REFUSAL_RE.search(response)),
+            "is_refusal": is_refusal(response),
             "mutation_applied": original != mutated,
             "mode": self.mode,
             "model": self.model_id,
