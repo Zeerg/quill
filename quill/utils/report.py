@@ -285,17 +285,33 @@ class ReportGenerator:
 
             # Truncate response for display
             max_preview_length = 80
-            original_preview = (original[:max_preview_length] + "...") if len(original) > max_preview_length else original
-            mutated_preview = (mutated[:max_preview_length] + "...") if len(mutated) > max_preview_length else mutated
-            response_preview = (response[:max_preview_length] + "...") if len(response) > max_preview_length else response
+            original_preview = (
+                (original[:max_preview_length] + "...")
+                if len(original) > max_preview_length
+                else original
+            )
+            mutated_preview = (
+                (mutated[:max_preview_length] + "...")
+                if len(mutated) > max_preview_length
+                else mutated
+            )
+            response_preview = (
+                (response[:max_preview_length] + "...")
+                if len(response) > max_preview_length
+                else response
+            )
 
             # Escape HTML entities
             original = original.replace("<", "&lt;").replace(">", "&gt;")
             mutated = mutated.replace("<", "&lt;").replace(">", "&gt;")
             response = response.replace("<", "&lt;").replace(">", "&gt;")
-            original_preview = original_preview.replace("<", "&lt;").replace(">", "&gt;")
+            original_preview = original_preview.replace("<", "&lt;").replace(
+                ">", "&gt;"
+            )
             mutated_preview = mutated_preview.replace("<", "&lt;").replace(">", "&gt;")
-            response_preview = response_preview.replace("<", "&lt;").replace(">", "&gt;")
+            response_preview = response_preview.replace("<", "&lt;").replace(
+                ">", "&gt;"
+            )
 
             badges = []
             if result.get("is_anomaly", False):
