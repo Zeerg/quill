@@ -1,7 +1,7 @@
 # Quill
 
 <p align="center"> 
-  <img src="quill/img/quill.png" title="Quill" align="center">
+  <img src="quill/img/quillv2.png" title="Quill" align="center">
 </p>
 
 **Quill** is an adversarial-prompt fuzzer designed to test and stress-test large language models (LLMs) by generating mutated prompts and detecting anomalies.
