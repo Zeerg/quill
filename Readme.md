@@ -17,10 +17,20 @@
 
 ## Installation
 
+### Quick Start
+
 ```bash
 git clone https://github.com/your-org/quill.git
 cd quill
-pip install -e .
+./setup.sh  # Automated setup script
+```
+
+### Manual Installation
+
+```bash
+git clone https://github.com/your-org/quill.git
+cd quill
+make setup  # Creates venv, installs deps, configures git hooks
 ```  
 
 ## Usage
@@ -124,6 +134,98 @@ python -m quill report -h
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+## Development
+
+### Make Commands
+
+Quill provides a comprehensive Makefile for development workflows:
+
+#### Setup & Installation
+- `make setup` - Complete development setup (recommended for first-time setup)
+- `make install` - Install package in development mode
+- `make dev` - Setup with all development tools
+- `make requirements` - Generate requirements files
+
+#### Testing & Quality
+- `make test` - Run full test suite
+- `make quick-test` - Run quick smoke tests
+- `make fuzz-test` - Run a sample fuzzing test
+- `make lint` - Run code linters (ruff, black)
+- `make format` - Auto-format code
+- `make typecheck` - Run type checking with mypy
+- `make security` - Run security vulnerability scans
+- `make check` - Run all quality checks (lint, type, security)
+
+#### Fuzzing Operations
+- `make fuzz` - Run fuzzing with default settings
+- `make fuzz-ollama` - Run fuzzing with Ollama (checks if running)
+- `make corpus-check` - Validate corpus files
+- `make mutator-list` - List available mutation strategies
+
+#### Claude Sub-Agents
+- `make agent-list` - List available Claude sub-agents
+- `make agent-test` - Test sub-agent availability
+
+#### Development Tools
+- `make docs` - Build documentation
+- `make serve-docs` - Serve docs locally on port 8000
+- `make benchmark` - Run performance benchmarks
+- `make profile` - Profile code execution
+
+#### Maintenance
+- `make clean` - Clean build artifacts
+- `make clean-cache` - Clean all cache files
+- `make clean-all` - Clean everything (including venv)
+- `make update-deps` - Update all dependencies
+
+#### Release Management
+- `make build` - Build distribution packages
+- `make dist` - Create source and wheel distributions
+- `make bump-patch` - Increment patch version (0.0.X)
+- `make bump-minor` - Increment minor version (0.X.0)
+- `make bump-major` - Increment major version (X.0.0)
+- `make version` - Display current version
+
+### Development Workflow
+
+1. **Initial Setup**
+   ```bash
+   ./setup.sh  # Or: make setup
+   ```
+
+2. **Before Committing**
+   ```bash
+   make check  # Runs all quality checks
+   make format  # Auto-format code
+   ```
+
+3. **Testing Changes**
+   ```bash
+   make quick-test  # Fast tests
+   make fuzz-test   # Test fuzzing functionality
+   ```
+
+4. **Full Test Suite**
+   ```bash
+   make test  # Run all tests with coverage
+   ```
+
+### Claude Sub-Agents
+
+Quill includes specialized AI agents to help with development:
+
+- **mutator-developer** - Create new mutation strategies
+- **corpus-analyzer** - Analyze and optimize test corpora
+- **results-investigator** - Deep dive into fuzzing results
+- **security-auditor** - Generate security assessment reports
+- **performance-optimizer** - Optimize fuzzing performance
+- **classifier-architect** - Design ML classifiers for output analysis
+- **dataset-curator** - Manage training datasets
+- **model-trainer** - Train and fine-tune classifiers
+- **inference-optimizer** - Optimize classifier deployment
+
+Use agents with Claude Code: `/agent [agent-name] [your request]`
 
 ## License
 

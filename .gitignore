@@ -1,4 +1,4 @@
-# Python artifacts
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,29 +16,90 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
 # Virtual environments
+.venv/
 venv/
-env/
 ENV/
+env/
+.virtualenv/
 
-# IDE files
-.idea/
+# Development tools
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.bandit
+
+# IDE
 .vscode/
+.idea/
 *.swp
 *.swo
-
-# Quill specific
-runs/
-.history/
+*~
+.project
+.pydevproject
+.settings/
+.DS_Store
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
-# macOS
+# Documentation
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# Quill specific
+runs/
+.cache/
+profile.stats
+requirements.txt
+requirements-dev.txt
+
+# OS files
 .DS_Store
-**/.claude/settings.local.json
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Security
+.env
+.env.local
+.env.*.local
+secrets/
+*.pem
+*.key
+
+# Testing
+.hypothesis/
+.benchmarks/
+
+# Claude
+.claude/cache/
+.claude/logs/
+
+# UV
+.uv/
+uv.lock
