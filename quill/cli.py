@@ -32,6 +32,9 @@ def run_fuzzer(args: argparse.Namespace, log: logging.Logger) -> None:
         random.seed(cfg.seed)
 
     # Create appropriate fuzzer instance
+    use_cache = not getattr(args, 'no_cache', False)
+    cache_ttl = getattr(args, 'cache_ttl', 3600)
+    
     if use_async:
         fuzzer = AsyncFuzzer(
             mode=cfg.mode,
@@ -45,6 +48,8 @@ def run_fuzzer(args: argparse.Namespace, log: logging.Logger) -> None:
             corpus_path=cfg.corpus,
             batch_size=getattr(args, 'batch_size', 10),
             max_concurrent=getattr(args, 'max_concurrent', 5),
+            use_cache=use_cache,
+            cache_ttl=cache_ttl,
         )
     else:
         fuzzer = Fuzzer(
@@ -57,6 +62,8 @@ def run_fuzzer(args: argparse.Namespace, log: logging.Logger) -> None:
             mutators=cfg.mutations,
             verbose=cfg.verbose,
             corpus_path=cfg.corpus,
+            use_cache=use_cache,
+            cache_ttl=cache_ttl,
         )
 
     stats = fuzzer.run()
