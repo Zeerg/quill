@@ -11,6 +11,7 @@
 - Generate mutated prompts based on seed corpus
 - Support for multiple mutation strategies (typo, injection, etc.)
 - Configurable HTTP or Ollama client modes
+- **Async processing mode for 5-10x performance improvement**
 - Anomaly detection on model responses
 - Detailed output with JSON reports for each prompt
 - Beautiful HTML report generation with interactive filtering
@@ -48,6 +49,9 @@ python -m quill fuzz -c path/to/corpus -o path/to/output ollama --model gemma3:2
 
 # Direct execution with the quill command
 quill fuzz -c path/to/corpus -o path/to/output --max-prompts 500 http --url http://localhost:8000/api
+
+# High-performance async mode (5-10x faster)
+quill fuzz --async --batch-size 20 -c path/to/corpus -o path/to/output ollama --model llama2
 ```  
 
 ### Report Generation

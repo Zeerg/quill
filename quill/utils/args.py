@@ -62,6 +62,25 @@ def build_parser() -> argparse.ArgumentParser:
         "-v", "--verbose", action="store_true", help="Debug-level logging"
     )
     fuzz_parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
+    
+    # Async options
+    fuzz_parser.add_argument(
+        "--async",
+        action="store_true",
+        help="Use async processing for improved performance"
+    )
+    fuzz_parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=10,
+        help="Number of requests to process in each batch (async mode)"
+    )
+    fuzz_parser.add_argument(
+        "--max-concurrent",
+        type=int,
+        default=5,
+        help="Maximum concurrent requests (async mode)"
+    )
 
     # Mode subcommands for fuzzing
     fuzz_subparsers = fuzz_parser.add_subparsers(
