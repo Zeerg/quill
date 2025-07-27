@@ -12,6 +12,7 @@ from ..utils.logging import get_logger
 from ..utils.clean import clean_directory
 from .mutators import get_mutator
 from .refusal import is_refusal
+from .cache import ResponseCache
 
 
 class Fuzzer:
@@ -28,6 +29,8 @@ class Fuzzer:
         mutators: List[str],
         verbose: bool,
         corpus_path: Optional[Path] = None,
+        use_cache: bool = True,
+        cache_ttl: int = 3600,
     ) -> None:
 
         self.mode = mode
@@ -45,6 +48,18 @@ class Fuzzer:
         self.log = get_logger(__name__, debug=verbose)
         # Load corpus prompts after logger is configured
         self.corpus_prompts = self._load_corpus()
+        
+        # Initialize cache
+        self.use_cache = use_cache
+        self.cache = None
+        if use_cache:
+            cache_dir = output_dir.parent / ".cache"
+            self.cache = ResponseCache(
+                cache_dir=cache_dir,
+                ttl=cache_ttl,
+                verbose=verbose
+            )
+            self.log.info("Response caching enabled")
 
     def _load_corpus(self) -> List[str]:
         """
@@ -91,6 +106,24 @@ class Fuzzer:
         """
         Query the model via HTTP or Ollama local install.
         """
+        # Check cache first
+        if self.use_cache and self.cache:
+            cached_response = self.cache.get(prompt, self.model_id, self.temperature)
+            if cached_response is not None:
+                self.log.debug(f"Using cached response for prompt: {prompt[:50]}...")
+                return cached_response
+        
+        # Make actual request
+        response = self._query_model_uncached(prompt)
+        
+        # Cache successful response
+        if self.use_cache and self.cache and not response.startswith("ERROR:"):
+            self.cache.set(prompt, self.model_id, self.temperature, response)
+            
+        return response
+        
+    def _query_model_uncached(self, prompt: str) -> str:
+        """Query model without caching."""
         if self.mode == "http" and self.url:
             resp = requests.post(
                 self.url, json={"prompt": prompt, "temperature": self.temperature}
@@ -280,13 +313,27 @@ class Fuzzer:
                 time.sleep(0.5)
 
         # Save summary stats
+        summary = {
+            "total_prompts": stats.total,
+            "anomalies": stats.anomalies,
+            "anomaly_rate": stats.anomalies / stats.total if stats.total > 0 else 0,
+            "completed_time": time.time(),
+        }
+        
+        # Add cache statistics if caching is enabled
+        if self.use_cache and self.cache:
+            cache_stats = self.cache.get_stats()
+            summary["cache_stats"] = cache_stats
+            self.log.info(
+                f"Cache performance: {cache_stats['hit_rate']:.1%} hit rate "
+                f"({cache_stats['total_hits']} hits, {cache_stats['misses']} misses)"
+            )
+            
+            # Export cache if requested
+            if self.output_dir:
+                self.cache.export_cache(self.output_dir / "cache_export.json")
+        
         with open(self.output_dir / "summary.json", "w", encoding="utf-8") as f:
-            summary = {
-                "total_prompts": stats.total,
-                "anomalies": stats.anomalies,
-                "anomaly_rate": stats.anomalies / stats.total if stats.total > 0 else 0,
-                "completed_time": time.time(),
-            }
             json.dump(summary, f, indent=2)
 
         return stats

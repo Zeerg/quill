@@ -233,6 +233,23 @@ clean-all: clean-cache
 	rm -f profile.stats
 	@echo "$(GREEN)✓ All files cleaned$(NC)"
 
+cache-stats:
+	@echo "$(BLUE)Cache statistics:$(NC)"
+	@if [ -f "$(RUNS_DIR)/latest/summary.json" ]; then \
+		python -c "import json; \
+		data = json.load(open('$(RUNS_DIR)/latest/summary.json')); \
+		if 'cache_stats' in data: \
+			stats = data['cache_stats']; \
+			print(f\"Hit Rate: {stats['hit_rate']:.1%}\"); \
+			print(f\"Memory Hits: {stats['memory_hits']}\"); \
+			print(f\"Disk Hits: {stats['disk_hits']}\"); \
+			print(f\"Misses: {stats['misses']}\"); \
+		else: \
+			print('No cache statistics found')"; \
+	else \
+		echo "$(YELLOW)No run data found$(NC)"; \
+	fi
+
 # Dependency Management
 update-deps: venv
 	@echo "$(BLUE)Updating dependencies...$(NC)"

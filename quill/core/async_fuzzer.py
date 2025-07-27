@@ -15,6 +15,7 @@ import logging
 from .fuzzer import Fuzzer
 from .classes import FuzzStats
 from ..utils.logging import get_logger
+from .cache import ResponseCache
 import random
 
 
@@ -78,6 +79,24 @@ class AsyncFuzzer(Fuzzer):
         Returns:
             Model response as string
         """
+        # Check cache first
+        if self.use_cache and self.cache:
+            cached_response = self.cache.get(prompt, self.model_id, self.temperature)
+            if cached_response is not None:
+                self.log.debug(f"Using cached response for prompt: {prompt[:50]}...")
+                return cached_response
+                
+        # Make actual request
+        response = await self._query_model_async_uncached(prompt)
+        
+        # Cache successful response
+        if self.use_cache and self.cache and not response.startswith("ERROR:"):
+            self.cache.set(prompt, self.model_id, self.temperature, response)
+            
+        return response
+        
+    async def _query_model_async_uncached(self, prompt: str) -> str:
+        """Async query without caching."""
         if not self.session:
             raise RuntimeError("AsyncFuzzer must be used as async context manager")
             

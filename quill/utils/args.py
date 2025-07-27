@@ -81,6 +81,19 @@ def build_parser() -> argparse.ArgumentParser:
         default=5,
         help="Maximum concurrent requests (async mode)"
     )
+    
+    # Cache options
+    fuzz_parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Disable response caching"
+    )
+    fuzz_parser.add_argument(
+        "--cache-ttl",
+        type=int,
+        default=3600,
+        help="Cache time-to-live in seconds (default: 1 hour)"
+    )
 
     # Mode subcommands for fuzzing
     fuzz_subparsers = fuzz_parser.add_subparsers(

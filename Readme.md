@@ -12,6 +12,7 @@
 - Support for multiple mutation strategies (typo, injection, etc.)
 - Configurable HTTP or Ollama client modes
 - **Async processing mode for 5-10x performance improvement**
+- **Intelligent response caching to avoid redundant API calls**
 - Anomaly detection on model responses
 - Detailed output with JSON reports for each prompt
 - Beautiful HTML report generation with interactive filtering
