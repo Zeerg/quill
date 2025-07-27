@@ -52,6 +52,17 @@ def list_mutators() -> List[str]:
     Returns:
         List of mutator names
     """
+    # If called from command line, print detailed info
+    import sys
+    if hasattr(sys, 'ps1') or sys.flags.interactive or 'list_mutators' in ' '.join(sys.argv):
+        for name in sorted(_MUTATOR_REGISTRY):
+            mutator_class = _MUTATOR_REGISTRY[name]
+            doc = mutator_class.__doc__ or "No description available"
+            # Get first line of docstring
+            description = doc.strip().split('\n')[0].strip()
+            print(f"  - {name}: {description}")
+        return []
+    
     return sorted(_MUTATOR_REGISTRY)
 
 

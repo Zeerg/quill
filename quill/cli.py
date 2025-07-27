@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional, List
 
 from .core.fuzzer import Fuzzer
+from .core.async_fuzzer import AsyncFuzzer
 from .utils.args import parse_args, parse_fuzz_args
 from .utils.logging import get_logger
 from .utils.report import generate_report
@@ -17,24 +18,46 @@ def run_fuzzer(args: argparse.Namespace, log: logging.Logger) -> None:
     """Run the fuzzer with the given arguments."""
     cfg = parse_fuzz_args(args)
 
-    log.info("Quill fuzzing starting with %s", cfg)
+    # Check if async mode is requested
+    use_async = getattr(args, 'async', False)
+    
+    if use_async:
+        log.info("Quill async fuzzing starting with %s", cfg)
+    else:
+        log.info("Quill fuzzing starting with %s", cfg)
 
     # Set random seed if provided
     if cfg.seed is not None:
         log.info(f"Setting random seed to {cfg.seed}")
         random.seed(cfg.seed)
 
-    fuzzer = Fuzzer(
-        mode=cfg.mode,
-        model_id=cfg.model,
-        url=cfg.url,
-        output_dir=cfg.outdir,
-        max_prompts=cfg.max_prompts,
-        temperature=cfg.temperature,
-        mutators=cfg.mutations,
-        verbose=cfg.verbose,
-        corpus_path=cfg.corpus,
-    )
+    # Create appropriate fuzzer instance
+    if use_async:
+        fuzzer = AsyncFuzzer(
+            mode=cfg.mode,
+            model_id=cfg.model,
+            url=cfg.url,
+            output_dir=cfg.outdir,
+            max_prompts=cfg.max_prompts,
+            temperature=cfg.temperature,
+            mutators=cfg.mutations,
+            verbose=cfg.verbose,
+            corpus_path=cfg.corpus,
+            batch_size=getattr(args, 'batch_size', 10),
+            max_concurrent=getattr(args, 'max_concurrent', 5),
+        )
+    else:
+        fuzzer = Fuzzer(
+            mode=cfg.mode,
+            model_id=cfg.model,
+            url=cfg.url,
+            output_dir=cfg.outdir,
+            max_prompts=cfg.max_prompts,
+            temperature=cfg.temperature,
+            mutators=cfg.mutations,
+            verbose=cfg.verbose,
+            corpus_path=cfg.corpus,
+        )
 
     stats = fuzzer.run()
 

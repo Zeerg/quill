@@ -227,7 +227,9 @@ class Fuzzer:
         # Use only the prompts from the specified corpus
         prompts = self.corpus_prompts
         if self.corpus_path and len(prompts) < self.max_prompts:
-            self.log.info(f"Using only {len(prompts)} prompts from corpus (max_prompts={self.max_prompts})")
+            self.log.info(
+                f"Using only {len(prompts)} prompts from corpus (max_prompts={self.max_prompts})"
+            )
         elif not self.corpus_path and len(prompts) < self.max_prompts:
             # Only create extra prompts when using default corpus
             extra = [f"prompt-{i}" for i in range(len(prompts), self.max_prompts)]
